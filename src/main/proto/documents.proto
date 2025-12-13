@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "org.eldir.shared.grpc";
+option java_outer_classname = "DocumentsProto";
+
+package eldir;
+
+service DocumentService {
+  rpc GetDocument(GetDocumentRequest) returns (Document);
+  rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse);
+  rpc CreateDocument(CreateDocumentRequest) returns (Document);
+  rpc UpdateDocument(UpdateDocumentRequest) returns (Document);
+  rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
+
+}
+
+
+// Типы файлов. 0 - всегда резерв для "Неизвестно/Ошибка"
+enum FileType {
+  FILE_TYPE_UNKNOWN = 0;
+  FILE_TYPE_PDF = 1;
+  FILE_TYPE_TXT = 2;
+  FILE_TYPE_DOCX = 3;
+  FILE_TYPE_MD = 4;
+}
+
+// Уровни доступа
+enum AccessLevel {
+  ACCESS_UNKNOWN = 0;
+  ACCESS_PUBLIC = 1;
+  ACCESS_DSP = 2; // Для служебного пользования
+  ACCESS_SECRET = 3;
+  ACCESS_TOP_SECRET = 4;
+  ACCESS_BURN_AFTER_READING = 5; // Уникальная механика удаления
+}
+
+message Document {
+  string id = 1;
+
+  // Жестко типизированные поля (gRPC сам их проверит)
+  FileType file_type = 2;
+  AccessLevel access_level = 3;
+
+  // Остальные EAV атрибуты (title, author, is_hypercube)
+  map<string, string> attributes = 4;
+}
+
+message GetDocumentRequest {
+  string id = 1;
+}
+
+message ListDocumentsRequest {
+  // Empty если хотим всё
+  // можно набубенить фич типа получить только by_author
+}
+
+message ListDocumentsResponse{
+  repeated Document documents = 1;
+}
+
+message CreateDocumentRequest {
+  FileType file_type = 1;
+  AccessLevel access_level = 2;
+  map<string, string> initial_attributes = 3;
+}
+
+message UpdateDocumentRequest {
+  string id = 1;
+  // Если поле не передано (будет UNKNOWN), сервер не должен его менять
+  FileType file_type = 2;
+  AccessLevel access_level = 3;
+  map<string, string> updated_attributes = 4;
+}
+
+
+
+message DeleteDocumentRequest {
+  string id = 1;
+}
+
+message DeleteDocumentResponse {
+  bool success = 1;
+  string message = 2;
+}

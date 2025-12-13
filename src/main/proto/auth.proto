@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+// Опции для генерации Java-кода
+option java_multiple_files = true;
+option java_package = "org.eldir.shared.grpc";
+option java_outer_classname = "AuthProto";
+
+package eldir;
+
+// Сервис для аутентификации пользователей
+service AuthService {
+  // Производит вход пользователя в систему
+  rpc Login(LoginRequest) returns (LoginResponse);
+
+  // (Опционально) Регистрирует нового пользователя
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+}
+
+// ---- Сообщения для RPC-методов ----
+
+// Запрос на вход в систему
+message LoginRequest {
+  string login = 1;
+  string password = 2;
+}
+
+// Ответ сервера после успешного входа
+message LoginResponse {
+  // Самое главное - JWT токен, который клиент должен сохранить
+  // и использовать для всех последующих запросов.
+  string access_token = 1;
+  string user_id = 2; // ID пользователя, может пригодиться клиенту
+}
+
+// Запрос на регистрацию
+message RegisterRequest {
+  string email = 1;
+  string password = 2;
+  // Можно передать и другие начальные данные
+  map<string, string> initial_attributes = 3;
+}
+
+// Ответ после регистрации
+message RegisterResponse {
+  string user_id = 1; // ID созданного пользователя
+  string message = 2;
+}
