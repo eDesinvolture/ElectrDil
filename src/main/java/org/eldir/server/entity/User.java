@@ -24,6 +24,8 @@ public class User {
     @Column(name = "current_token")
     private String currentToken;
 
+    @Column(name = "clearance_level")
+    private String clearanceLevel;
     public User() {}
 
     // Приватный конструктор для Билдера
@@ -45,12 +47,14 @@ public class User {
         private String password;
         private String ipAddress;
         private String currentToken;
+        private String clearanceLevel;
 
         public Builder id(UUID id) { this.id = id; return this; }
         public Builder login(String login) { this.login = login; return this; }
         public Builder password(String password) { this.password = password; return this; }
         public Builder ipAddress(String ipAddress) { this.ipAddress = ipAddress; return this; }
         public Builder currentToken(String currentToken) { this.currentToken = currentToken; return this; }
+        public Builder clearanceLevel(String level) { this.clearanceLevel = level; return this; }
 
         public User build() {
             return new User(this);
@@ -72,4 +76,8 @@ public class User {
 
     public String getCurrentToken() { return currentToken; }
     public void setCurrentToken(String currentToken) { this.currentToken = currentToken; }
+
+    public String getClearanceLevel() { return clearanceLevel; }
+    public void setClearanceLevel(String clearanceLevel) { this.clearanceLevel = clearanceLevel; }
+
 }

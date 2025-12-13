@@ -61,15 +61,23 @@ public class DatabaseInitializer {
 
     private void initDefaultAdmin() {
         if (userRepository.findByLogin("admin").isEmpty()) {
-            // Используем наш самописный Builder
+
             User admin = User.builder()
                     .login("admin")
-                    .password(passwordEncoder.encode("admin")) // Пароль: admin
+                    .password(passwordEncoder.encode("admin"))
+                    .clearanceLevel("ACCESS_TOP_SECRET")
                     .ipAddress("127.0.0.1")
                     .build();
 
             userRepository.save(admin);
-            log.info("Created default admin user (login: admin, pass: admin)");
+        }
+        if (userRepository.findByLogin("manager").isEmpty()) {
+            User manager = User.builder()
+                    .login("manager")
+                    .password(passwordEncoder.encode("manager"))
+                    .clearanceLevel("ACCESS_DSP")
+                    .build();
+            userRepository.save(manager);
         }
     }
 }

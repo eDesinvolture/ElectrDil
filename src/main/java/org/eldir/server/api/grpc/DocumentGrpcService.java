@@ -1,6 +1,7 @@
 package org.eldir.server.api.grpc;
 
 import io.grpc.stub.StreamObserver;
+import org.eldir.server.security.GrpcAuthInterceptor;
 import org.lognet.springboot.grpc.GRpcService;
 import org.eldir.server.service.DocumentService;
 import org.eldir.shared.grpc.*; // Импорт сгенерированных классов
@@ -26,11 +27,9 @@ public class DocumentGrpcService extends DocumentServiceGrpc.DocumentServiceImpl
             AccessLevel access = request.getAccessLevel();
             Map<String, String> attrs = request.getInitialAttributesMap();
 
-            // В реальной системе логин берется из SecurityContextHolder (из токена)
-            // Пока для простоты хардкод или передача, но допустим admin
-            String currentLogin = "admin";
+            String login = GrpcAuthInterceptor.USER_LOGIN_KEY.get();
 
-            Document createdDoc = documentService.createDocument(type, access, attrs, currentLogin);
+            Document createdDoc = documentService.createDocument(type, access, attrs, login);
 
             responseObserver.onNext(createdDoc);
             responseObserver.onCompleted();
@@ -53,7 +52,8 @@ public class DocumentGrpcService extends DocumentServiceGrpc.DocumentServiceImpl
     @Override
     public void listDocuments(ListDocumentsRequest request, StreamObserver<ListDocumentsResponse> responseObserver) {
         try {
-            List<Document> docs = documentService.getAllDocuments();
+            String login = GrpcAuthInterceptor.USER_LOGIN_KEY.get();
+            List<Document> docs = documentService.getAllDocuments(login);
 
             ListDocumentsResponse response = ListDocumentsResponse.newBuilder()
                     .addAllDocuments(docs)

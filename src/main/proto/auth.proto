@@ -45,3 +45,30 @@ message RegisterResponse {
   string user_id = 1; // ID созданного пользователя
   string message = 2;
 }
+
+service UserService {
+  rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
+  rpc UpdateUserClearance(UpdateUserClearanceRequest) returns (UpdateUserClearanceResponse);
+}
+
+message ListUsersRequest {} // Пустой, дай всех
+
+message UserDto {
+  string id = 1;
+  string login = 2;
+  string clearance_level = 3; // "ACCESS_SECRET" и т.д.
+}
+
+message ListUsersResponse {
+  repeated UserDto users = 1;
+}
+
+message UpdateUserClearanceRequest {
+  string login = 1;
+  string new_clearance_level = 2; // ENUM строкой
+}
+
+message UpdateUserClearanceResponse {
+  bool success = 1;
+  string message = 2;
+}

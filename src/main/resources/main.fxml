@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.eldir.client.view.MainView">
+    <top>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <ToolBar prefHeight="40.0" prefWidth="200.0">
+                    <items>
+                        <Button onAction="#onCreateSimple" text="Создать PDF (Секретно)" />
+                        <Button onAction="#onCreateBurn" style="-fx-text-fill: red;" text="Создать &quot;Сжечь после прочтения&quot;" />
+                        <Button onAction="#onRefresh" text="Обновить список" />
+                    </items>
+                </ToolBar>
+            </children>
+        </VBox>
+    </top>
+    <center>
+        <TableView fx:id="documentsTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <columns>
+                <TableColumn fx:id="idColumn" prefWidth="150.0" text="ID" />
+                <TableColumn fx:id="typeColumn" prefWidth="75.0" text="Тип" />
+                <TableColumn fx:id="accessColumn" prefWidth="100.0" text="Доступ" />
+                <TableColumn fx:id="titleColumn" prefWidth="200.0" text="Название (EAV)" />
+            </columns>
+         <contextMenu>
+            <ContextMenu>
+              <items>
+                <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+              </items>
+            </ContextMenu>
+         </contextMenu>
+        </TableView>
+    </center>
+    <bottom>
+        <Label fx:id="statusLabel" text="Ready" BorderPane.alignment="CENTER_LEFT" />
+    </bottom>
+</BorderPane>

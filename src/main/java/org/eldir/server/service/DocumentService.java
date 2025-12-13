@@ -42,6 +42,12 @@ public class DocumentService {
         User author = userRepository.findByLogin(authorLogin)
                 .orElseThrow(() -> new RuntimeException("Author not found: " + authorLogin));
 
+
+        AccessLevel authorClearance = AccessLevel.valueOf(author.getClearanceLevel());
+        if (accessLevel.getNumber() > authorClearance.getNumber()) {
+            throw new RuntimeException("Недостаточно прав для создания документа с грифом " + accessLevel);
+        }
+
         EavDocument doc = new EavDocument();
         doc.setAuthor(author);
         doc.setFileType(fileType.name());
@@ -58,8 +64,6 @@ public class DocumentService {
         EavDocument doc = documentRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new RuntimeException("Document not found: " + id));
 
-        // Специфичную бизнес-логику (сжигание файла) можно оставить,
-        // но технические логи ("метод вызван") делает Аспект.
         if ("ACCESS_BURN_AFTER_READING".equals(doc.getAccessLevel())) {
             Document proto = mapToProto(doc);
             documentRepository.delete(doc);
@@ -92,13 +96,28 @@ public class DocumentService {
     }
 
     @Transactional
-    public List<Document> getAllDocuments() {
-        // 1. Берем все документы из базы
-        List<EavDocument> docs = documentRepository.findAll();
+    public List<Document> getAllDocuments(String requesterLogin) {
+        // 1. Ищем, кто спрашивает
+        User user = userRepository.findByLogin(requesterLogin)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 2. Превращаем их в Proto-формат
-        return docs.stream()
-                .map(this::mapToProto) // Используем существующий метод маппинга
+        // Превращаем строку из БД в Enum для сравнения (через ordinal)
+        AccessLevel userClearance = AccessLevel.valueOf(user.getClearanceLevel());
+
+        // 2. Берем все документы
+        List<EavDocument> allDocs = documentRepository.findAll();
+
+        // 3. Фильтруем
+        return allDocs.stream()
+                .filter(doc -> {
+                    // Если у документа лвл null, считаем PUBLIC
+                    String docLvlStr = doc.getAccessLevel() == null ? "ACCESS_PUBLIC" : doc.getAccessLevel();
+                    AccessLevel docLvl = AccessLevel.valueOf(docLvlStr);
+
+                    // Юзер видит документ, если его допуск >= уровню документа
+                    return userClearance.getNumber() >= docLvl.getNumber();
+                })
+                .map(this::mapToProto)
                 .collect(Collectors.toList());
     }
 
