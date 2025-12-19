@@ -8,10 +8,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<!-- ВНИМАНИЕ: fx:controller указывает на Java-класс, который мы создадим ниже -->
 <VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.eldir.client.view.LoginView">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
     </padding>
     <children>
         <Label text="Eldir System">
@@ -19,9 +18,9 @@
                 <Font name="System Bold" size="18.0" />
             </font>
         </Label>
-        <TextField fx:id="loginField" promptText="Login (admin)" text="admin" />
-        <PasswordField fx:id="passwordField" promptText="Password" />
-        <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLoginClicked" text="Войти в систему" />
-        <Label fx:id="errorLabel" textFill="RED" />
+        <TextField fx:id="loginField" promptText="Логин (admin)" text="admin" />
+        <PasswordField fx:id="passwordField" promptText="Пароль" text="admin" />
+        <Button fx:id="loginButton" mnemonicParsing="false" onAction="#onLoginClicked" text="Войти в систему" defaultButton="true" />
+        <Label fx:id="errorLabel" textFill="RED" wrapText="true" maxWidth="300" />
     </children>
 </VBox>

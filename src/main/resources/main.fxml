@@ -9,9 +9,12 @@
             <children>
                 <ToolBar prefHeight="40.0" prefWidth="200.0">
                     <items>
-                        <Button onAction="#onCreateSimple" text="Создать PDF (Секретно)" />
-                        <Button onAction="#onCreateBurn" style="-fx-text-fill: red;" text="Создать &quot;Сжечь после прочтения&quot;" />
+                        <Button onAction="#onCreateDocument" text="Создать файл" />
                         <Button onAction="#onRefresh" text="Обновить список" />
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <Label fx:id="userLabel" style="-fx-padding: 0 10 0 0;" text="Пользователь: ---" />
+                        <Button onAction="#onLogout" style="-fx-text-fill: #d9534f;" text="Выйти" />
+                        <Button fx:id="adminCreateUserBtn" text="Создать пользователя" onAction="#onCreateUser" visible="false" managed="false" />
                     </items>
                 </ToolBar>
             </children>
@@ -25,13 +28,13 @@
                 <TableColumn fx:id="accessColumn" prefWidth="100.0" text="Доступ" />
                 <TableColumn fx:id="titleColumn" prefWidth="200.0" text="Название (EAV)" />
             </columns>
-         <contextMenu>
-            <ContextMenu>
-              <items>
-                <MenuItem mnemonicParsing="false" text="Unspecified Action" />
-              </items>
-            </ContextMenu>
-         </contextMenu>
+            <contextMenu>
+                <ContextMenu>
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                    </items>
+                </ContextMenu>
+            </contextMenu>
         </TableView>
     </center>
     <bottom>

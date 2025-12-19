@@ -1,7 +1,5 @@
 package org.eldir.client.model;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.eldir.client.pattern.IObserver;
 import org.eldir.client.pattern.ISubject;
 import org.eldir.shared.grpc.Document;
@@ -10,15 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-//@Setter
-//@Getter
 public class DocumentModel implements ISubject {
     private final List<IObserver> observers = new ArrayList<>();
     private List<Document> documents = new ArrayList<>();
     private Document selectedDocument;
-
-    // Данные для создания нового
-    private String currentUserLogin = "admin"; // Пока хардкод, позже из Security
+    private String currentUserLogin;
 
     public void setDocuments(List<Document> documents) {
         this.documents = documents;
@@ -31,11 +25,14 @@ public class DocumentModel implements ISubject {
 
     public void setSelectedDocument(Document document) {
         this.selectedDocument = document;
-        // Можно уведомить, если нужно обновить детали
     }
 
     public String getCurrentUserLogin() {
         return currentUserLogin;
+    }
+
+    public void setCurrentUserLogin(String login) {
+        this.currentUserLogin = login;
     }
 
     @Override

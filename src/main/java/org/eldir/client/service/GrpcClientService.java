@@ -17,6 +17,7 @@ public class GrpcClientService {
     private final ManagedChannel channel;
     private final AuthServiceGrpc.AuthServiceBlockingStub authStub;
     private final DocumentServiceGrpc.DocumentServiceBlockingStub docStub;
+    private final UserServiceGrpc.UserServiceBlockingStub userStub;
 
     private String jwtToken;
 
@@ -38,11 +39,20 @@ public class GrpcClientService {
 
         this.authStub = AuthServiceGrpc.newBlockingStub(channel);
         this.docStub = DocumentServiceGrpc.newBlockingStub(channel);
+        this.userStub = UserServiceGrpc.newBlockingStub(channel);
+    }
+
+    public void createUser(String login, String password, AccessLevel level) {
+        CreateUserRequest request = CreateUserRequest.newBuilder()
+                .setLogin(login)
+                .setPassword(password)
+                .setClearanceLevel(level.name())
+                .build();
+
+        getAuthenticatedUserStub().createUser(request);
     }
 
     public String login(String login, String password) {
-        // Убедись, что ты обновил .proto файл и сделал mvn clean compile,
-        // чтобы метод setLogin() появился вместо setEmail()
         LoginRequest request = LoginRequest.newBuilder()
                 .setLogin(login)
                 .setPassword(password)
@@ -53,18 +63,18 @@ public class GrpcClientService {
         return this.jwtToken;
     }
 
-    // ИСПРАВЛЕННЫЙ МЕТОД: Получение списка документов
+    public void logout() {
+        this.jwtToken = null;
+    }
+
     public List<Document> getDocuments() {
-        // Формируем пустой запрос
         ListDocumentsRequest request = ListDocumentsRequest.newBuilder().build();
 
-        // Вызываем защищенный стаб (сервер вернет список)
         ListDocumentsResponse response = getAuthenticatedDocStub().listDocuments(request);
 
         return response.getDocumentsList();
     }
 
-    // ИСПРАВЛЕННЫЙ МЕТОД: Прикрепление заголовков
     private DocumentServiceGrpc.DocumentServiceBlockingStub getAuthenticatedDocStub() {
         if (jwtToken == null) throw new IllegalStateException("Not logged in");
 
@@ -84,11 +94,23 @@ public class GrpcClientService {
         return getAuthenticatedDocStub().createDocument(request);
     }
 
+    public void deleteDocument(String id) {
+        DeleteDocumentRequest request = DeleteDocumentRequest.newBuilder().setId(id).build();
+        getAuthenticatedDocStub().deleteDocument(request);
+    }
+
     public Document getDocument(String id) {
         return getAuthenticatedDocStub().getDocument(GetDocumentRequest.newBuilder().setId(id).build());
     }
 
     public void shutdown() {
         channel.shutdown();
+    }
+
+    private UserServiceGrpc.UserServiceBlockingStub getAuthenticatedUserStub() {
+        if (jwtToken == null) throw new IllegalStateException("Not logged in");
+        Metadata metadata = new Metadata();
+        metadata.put(Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER), "Bearer " + jwtToken);
+        return userStub.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(metadata));
     }
 }

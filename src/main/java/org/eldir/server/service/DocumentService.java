@@ -42,12 +42,7 @@ public class DocumentService {
         User author = userRepository.findByLogin(authorLogin)
                 .orElseThrow(() -> new RuntimeException("Author not found: " + authorLogin));
 
-
-        AccessLevel authorClearance = AccessLevel.valueOf(author.getClearanceLevel());
-        if (accessLevel.getNumber() > authorClearance.getNumber()) {
-            throw new RuntimeException("Недостаточно прав для создания документа с грифом " + accessLevel);
-        }
-
+        // Пишшем вверх типа.
         EavDocument doc = new EavDocument();
         doc.setAuthor(author);
         doc.setFileType(fileType.name());
@@ -57,6 +52,11 @@ public class DocumentService {
         doc = documentRepository.save(doc);
 
         return mapToProto(doc);
+    }
+
+    @Transactional
+    public void deleteDocument(String id) {
+        documentRepository.deleteById(UUID.fromString(id));
     }
 
     @Transactional
@@ -90,31 +90,26 @@ public class DocumentService {
         return mapToProto(documentRepository.save(doc));
     }
 
-    @Transactional
-    public void deleteDocument(String id) {
-        documentRepository.deleteById(UUID.fromString(id));
-    }
 
     @Transactional
     public List<Document> getAllDocuments(String requesterLogin) {
-        // 1. Ищем, кто спрашивает
+
         User user = userRepository.findByLogin(requesterLogin)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Превращаем строку из БД в Enum для сравнения (через ordinal)
         AccessLevel userClearance = AccessLevel.valueOf(user.getClearanceLevel());
 
-        // 2. Берем все документы
         List<EavDocument> allDocs = documentRepository.findAll();
 
-        // 3. Фильтруем
         return allDocs.stream()
                 .filter(doc -> {
-                    // Если у документа лвл null, считаем PUBLIC
                     String docLvlStr = doc.getAccessLevel() == null ? "ACCESS_PUBLIC" : doc.getAccessLevel();
                     AccessLevel docLvl = AccessLevel.valueOf(docLvlStr);
 
-                    // Юзер видит документ, если его допуск >= уровню документа
+                    if (docLvl == AccessLevel.ACCESS_BURN_AFTER_READING) {
+                        return userClearance.getNumber() >= AccessLevel.ACCESS_TOP_SECRET.getNumber();
+                    }
+
                     return userClearance.getNumber() >= docLvl.getNumber();
                 })
                 .map(this::mapToProto)

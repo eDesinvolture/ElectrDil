@@ -49,6 +49,7 @@ message RegisterResponse {
 service UserService {
   rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
   rpc UpdateUserClearance(UpdateUserClearanceRequest) returns (UpdateUserClearanceResponse);
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
 }
 
 message ListUsersRequest {} // Пустой, дай всех
@@ -71,4 +72,16 @@ message UpdateUserClearanceRequest {
 message UpdateUserClearanceResponse {
   bool success = 1;
   string message = 2;
+}
+
+message CreateUserRequest {
+  string login = 1;
+  string password = 2;
+  string clearance_level = 3;
+}
+
+message CreateUserResponse {
+  bool success = 1;
+  string message = 2;
+  string user_id = 3;
 }

@@ -27,19 +27,15 @@ public class AuthGrpcService extends AuthServiceGrpc.AuthServiceImplBase {
     @Override
     public void login(LoginRequest request, StreamObserver<LoginResponse> responseObserver) {
         try {
-            // 1. Ищем по логину
             User user = userRepository.findByLogin(request.getLogin())
                     .orElseThrow(() -> new RuntimeException("User not found"));
 
-            // 2. Проверяем пароль
             if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                 throw new RuntimeException("Invalid password");
             }
 
-            // 3. Генерируем токен
             String token = jwtService.generateToken(user.getLogin());
 
-            // 4. Отправляем ответ
             LoginResponse response = LoginResponse.newBuilder()
                     .setAccessToken(token)
                     .setUserId(user.getId().toString())

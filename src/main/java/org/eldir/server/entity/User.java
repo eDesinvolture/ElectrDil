@@ -35,6 +35,7 @@ public class User {
         this.password = builder.password;
         this.ipAddress = builder.ipAddress;
         this.currentToken = builder.currentToken;
+        this.clearanceLevel = builder.clearanceLevel;
     }
 
     public static Builder builder() {

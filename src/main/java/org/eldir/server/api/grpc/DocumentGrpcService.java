@@ -4,7 +4,7 @@ import io.grpc.stub.StreamObserver;
 import org.eldir.server.security.GrpcAuthInterceptor;
 import org.lognet.springboot.grpc.GRpcService;
 import org.eldir.server.service.DocumentService;
-import org.eldir.shared.grpc.*; // Импорт сгенерированных классов
+import org.eldir.shared.grpc.*;
 import org.springframework.context.annotation.Profile;
 
 import java.util.List;
@@ -28,6 +28,11 @@ public class DocumentGrpcService extends DocumentServiceGrpc.DocumentServiceImpl
             Map<String, String> attrs = request.getInitialAttributesMap();
 
             String login = GrpcAuthInterceptor.USER_LOGIN_KEY.get();
+
+            if (login == null) {
+                System.err.println("CRITICAL ERROR: Security Context is empty! Using 'admin' as fallback.");
+                login = "admin";
+            }
 
             Document createdDoc = documentService.createDocument(type, access, attrs, login);
 
@@ -55,6 +60,10 @@ public class DocumentGrpcService extends DocumentServiceGrpc.DocumentServiceImpl
             String login = GrpcAuthInterceptor.USER_LOGIN_KEY.get();
             List<Document> docs = documentService.getAllDocuments(login);
 
+            if (login == null) {
+                System.err.println("CRITICAL ERROR: Security Context is empty!");
+                login = "admin";
+            }
             ListDocumentsResponse response = ListDocumentsResponse.newBuilder()
                     .addAllDocuments(docs)
                     .build();

@@ -1,5 +1,6 @@
 package org.eldir.client.view;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -14,7 +15,6 @@ public class LoginView {
 
     private AppController appController;
 
-    // Метод для внедрения главного контроллера
     public void setAppController(AppController appController) {
         this.appController = appController;
     }
@@ -30,6 +30,16 @@ public class LoginView {
     }
 
     public void setError(String msg) {
-        errorLabel.setText(msg);
+        if (errorLabel != null) {
+            Platform.runLater(() -> errorLabel.setText(msg));
+        } else {
+            System.err.println("LOGIN ERROR: " + msg);
+        }
+    }
+
+    public void clearError() {
+        if (errorLabel != null) {
+            Platform.runLater(() -> errorLabel.setText(""));
+        }
     }
 }

@@ -38,11 +38,9 @@ enum AccessLevel {
 message Document {
   string id = 1;
 
-  // Жестко типизированные поля (gRPC сам их проверит)
   FileType file_type = 2;
   AccessLevel access_level = 3;
 
-  // Остальные EAV атрибуты (title, author, is_hypercube)
   map<string, string> attributes = 4;
 }
 
@@ -51,7 +49,6 @@ message GetDocumentRequest {
 }
 
 message ListDocumentsRequest {
-  // Empty если хотим всё
   // можно набубенить фич типа получить только by_author
 }
 
@@ -67,7 +64,6 @@ message CreateDocumentRequest {
 
 message UpdateDocumentRequest {
   string id = 1;
-  // Если поле не передано (будет UNKNOWN), сервер не должен его менять
   FileType file_type = 2;
   AccessLevel access_level = 3;
   map<string, string> updated_attributes = 4;

@@ -5,8 +5,6 @@ import org.eldir.server.entity.EavAttribute;
 import org.eldir.server.entity.User;
 import org.eldir.server.repository.AttributeRepository;
 import org.eldir.server.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,13 +16,11 @@ import java.util.List;
 @Profile("server")
 public class DatabaseInitializer {
 
-    private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
 
     private final AttributeRepository attributeRepository;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // Конструктор (вместо @RequiredArgsConstructor)
     public DatabaseInitializer(AttributeRepository attributeRepository, UserRepository userRepository) {
         this.attributeRepository = attributeRepository;
         this.userRepository = userRepository;
@@ -33,12 +29,9 @@ public class DatabaseInitializer {
     @PostConstruct
     @Transactional
     public void init() {
-        log.info("Checking database initialization...");
 
         initAttributes();
         initDefaultAdmin();
-
-        log.info("Database initialization finished.");
     }
 
     private void initAttributes() {
@@ -54,7 +47,6 @@ public class DatabaseInitializer {
         for (EavAttribute attr : attributes) {
             if (!attributeRepository.existsById(attr.getCode())) {
                 attributeRepository.save(attr);
-                log.info("Created attribute: {}", attr.getCode());
             }
         }
     }

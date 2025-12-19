@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -18,8 +19,12 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Отключаем CSRF, т.к. у нас не браузер
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Разрешаем все WEB запросы (gRPC у нас защищен отдельно)
+                        .anyRequest().permitAll() // Разрешаем все WEB запросы
                 );
         return http.build();
+    }
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

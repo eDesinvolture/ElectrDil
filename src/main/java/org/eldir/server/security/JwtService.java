@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    // ключ должен быть в properties - пока похуй
+    // ключ должен быть в properties - пока неважно
     private static final String SECRET = "my_super_secret_key_for_eldir_course_work_1234567890";
     private static final long EXPIRATION_TIME = 86400000; // 24 часа
 
