@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 public class UserGrpcService extends UserServiceGrpc.UserServiceImplBase {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;  // ИСПРАВЛЕНО
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public UserGrpcService(UserRepository userRepository,
-                           BCryptPasswordEncoder passwordEncoder) {  // ИСПРАВЛЕНО
+                           BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }

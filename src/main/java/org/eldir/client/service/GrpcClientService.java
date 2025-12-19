@@ -22,7 +22,7 @@ public class GrpcClientService {
     private String jwtToken;
 
     public GrpcClientService() {
-//        // --- НАСТРОЙКА SSL (TLS) ---
+//        // SSL (TLS)
 //        SslContext sslContext;
 //        try {
 //            sslContext = GrpcSslContexts.forClient()
