@@ -17,7 +17,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // Отключаем CSRF, т.к. у нас не браузер
+                .csrf(AbstractHttpConfigurer::disable) // Отключаем CSRF, тк не браузер
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll() // Разрешаем все WEB запросы
                 );

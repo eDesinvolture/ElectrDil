@@ -63,7 +63,6 @@ public class MainView {
             String login = appController.getCurrentUserLogin();
             userLabel.setText("Пользователь: " + login);
 
-            // ИСПРАВЛЕНО: используем managed для правильного управления пространством
             if ("admin".equals(login)) {
                 adminCreateUserBtn.setVisible(true);
                 adminCreateUserBtn.setManaged(true);

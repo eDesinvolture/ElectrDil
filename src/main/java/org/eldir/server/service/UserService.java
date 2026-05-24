@@ -1,4 +1,4 @@
-package org.eldir.server.service;
-
-public class UserService {
-}
+//package org.eldir.server.service;
+//
+//public class UserService {
+//}
