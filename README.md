@@ -15,7 +15,8 @@ CREATE DATABASE eldir_db;
 Настройки подключения в src/main/resources/application.properties
 
 Чтобы запустить юнит-тесты из мавена нужно выполнить в консоли(или в IDE нажать)
-mvn (clean) test
+mvn (clean) test;
+Или выполнить класс DocumentServiceTest
 
 чтобы запустить сервер нужно запустить класс EldirServerApplication
 чтобы запустить клиента нужно запустить класс ClientLauncher
